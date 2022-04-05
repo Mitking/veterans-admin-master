@@ -1,0 +1,331 @@
+<template>
+  <div>
+    <!--搜索栏目 @enter="transition=false;transitionMarginTop=0"-->
+    <mix-search
+      v-show="searchFormShow"
+      ref="searchForm"
+      :form="searchForm"
+      :formlist="searchList"
+      v-bind="$attrs"
+      @search="search({ prop: true })"
+    />
+    <!-- 操作栏目 -->
+    <mix-operate
+      :style="{'margin-top':searchFormShow?'0px':'24px','transition':transition?null:'all .3s ease'}"
+      :operate-list="operateList"
+      :ids="ids"
+      :current-row="currentRow"
+      :back="true"
+      :search-form-show="searchFormShow"
+      @search-form-act="
+        searchFormShow = !searchFormShow;
+        $nextTick(() => {
+          $emit('update:search_form_height', $refs.searchForm.$el.offsetHeight)
+        })"
+    />
+    <!--    表格 @row-dblclick="openModel(operateItem=operateList[1])" " -->
+    <el-table
+      ref="Tab"
+      v-loading="Mixin_loading"
+      style="margin:0 24px;max-width:98%;"
+      :style="{width:minxin_width_total(ArrFilter($attrs['form-data'],{show:true,tabHidden:undefined}),{op:true,opWidth:55+(mixTableOprateLength===1 && 70 || mixTableOprateLength>1 && mixTableOprateLength*40 || 0)})}"
+      :header-cell-style="{background:'#F3F4F7',color:'#555'}"
+      border
+      :max-height="mixin_tab_max_height"
+      highlight-current-row
+      :data="tableData.records"
+      @row-click="(row) => {$refs.Tab.toggleRowSelection(row)}"
+      @selection-change="handleSelectionChange"
+    >
+      <!--   可选  -->
+      <el-table-column
+        type="selection"
+        width="55"
+        align="center"
+        :fixed="!!tableData.records.length?'left':false"
+      />
+      <!--   v-if="item.show" 表头  -->
+      <el-table-column
+        v-for="(item,index) in ArrFilter($attrs['form-data'],{show:true})"
+        :key="index"
+        :prop="item.prop"
+        align="center"
+        :width="item.width || '220'"
+      >
+        <template slot="header">
+          <div>{{ item.title }}</div>
+        </template>
+        <template slot-scope="{row}">
+          <div v-if="item.type==='if_type' || item.type==='if_enable'" :style="{color:row[item.prop]?null:'#999999'}">{{ MenuGetPropName(item.type,row[item.prop]) }}</div>
+          <div v-else-if="item.type==='select'">{{ MenuGetPropName(item.selectData,row[item.prop],item.selectOption?item.selectOption:{ value: '', label: '' }) }}</div>
+          <el-tooltip
+            v-else-if="item.type==='img'"
+            placement="bottom"
+            effect="light"
+          >
+            <el-image
+              style="width: 50px;"
+              :src="'https://bdd-ns.oss-cn-beijing.aliyuncs.com/'+row[item.prop]"
+            />
+            <template slot="content">
+              <el-image
+                style="width: 500px;"
+                :src="'https://bdd-ns.oss-cn-beijing.aliyuncs.com/'+row[item.prop]"
+                fit="scale-down"
+              />
+            </template>
+          </el-tooltip>
+          <!--          v-else-->
+          <el-tag
+            v-else-if="item.type==='tag_click'"
+            v-permission="['retail:screen:set:switchState']"
+            effect="dark"
+            :type="row[item.prop]?'success':'info'"
+            @click="switchStateFn(row)"
+          >已{{ MenuGetPropName('if_enable',row[item.prop]) }}</el-tag>
+          <div v-else>{{ row[item.prop] }}</div>
+        </template>
+      </el-table-column>
+      <!-- 操作单条 -->
+      <el-table-column
+        v-if="mixTableOprateLength"
+        :width="mixTableOprateLength===1 && 70 || mixTableOprateLength>1 && mixTableOprateLength*40 || 0"
+        align="center"
+        :fixed="!!tableData.records.length?'right':false"
+        label="操作"
+        class="my-op-fa"
+      >
+        <template slot-scope="{ row }">
+          <el-tooltip
+            v-for="item in operateTableList"
+            :key="item.prop"
+            effect="light"
+            :content="item.title"
+            placement="top"
+            :hide-after="1000"
+            :enterable="false"
+            :disabled="$store.state.app.tooltipDisabled"
+          >
+            <el-button
+              v-show="item.show"
+              v-permission="item.permission"
+              class="my-op-class"
+              type="text"
+              size="mini"
+              :disabled="comp_disabled_table(item,row)"
+              :loading="item.loading"
+              :icon="item.icon"
+              @click.stop="
+                if(operateTableList.every(item => !item.loading )){
+                  currentRow=row;
+                  $listeners.currentSelect(currentRow);
+                  item.click(item)
+                }"
+            />
+          </el-tooltip>
+        </template>
+      </el-table-column>
+    </el-table>
+    <!--分页-->
+    <mix-page ref="mixinPage" :form="searchForm" :table-data="tableData" @search="search" />
+  </div>
+</template>
+
+<script>
+import MixinGlobal from '@/components/MixinGlobal'
+import { getPage, deleteOrders, switchState, batchDisable } from '@/api/wms/retailscreen'
+export default {
+  name: 'Order',
+  components: {},
+  // 全局常用字段
+  mixins: [MixinGlobal],
+  data() {
+    return {
+      ruleForm: {
+        selectData: ''
+      },
+      dialogVisible: false,
+      rules: {
+        selectData: [{ required: true, message: '请输入日期', trigger: 'blur' }]
+      },
+      searchList: [ // 搜索栏项目
+        { title: '组织', prop: 'orgId', defaultValue: 0, type: 'select', selectData: 'organizes', selectOption: { label: 'orgShortName', value: 'id' }, width: '300px' },
+        { title: '门店', prop: 'setStoreId', defaultValue: this.$store.getters.accountType === 1 ? this.$store.state.user.storeId : 0, type: 'select', selectData: 'stores', selectOption: { label: 'name', value: 'id' }, fatherProp: 'orgId', width: '300px' },
+        { title: '标题', prop: 'title', type: 'text', width: '300px' },
+        { title: '只看启用', prop: 'state', type: 'checkbox' }
+      ],
+      operateTableList: [
+        { title: '预览', show: true, prop: 'detail', click: this.$listeners.openModel, loading: false, icon: 'el-icon-document', disabled: 'isRow', type: 'primary', permission: ['retail:screen:set:getScreenImgs'], width: 80 }
+      ],
+      operateList: [ // 操作栏项目
+        { title: '查询', show: true, prop: 'search', click: this.search, icon: 'el-icon-search', disabled: false, type: 'primary', permission: ['retail:screen:set:getList'], width: 80 },
+        { title: '新增', show: true, prop: 'insert', click: this.$listeners.openModel, loading: false, icon: 'el-icon-plus', disabled: false, type: 'primary', permission: ['retail:screen:set:add'], width: 80 },
+        // { title: '修改', show: true, prop: 'edit', click: this.$listeners.openModel, loading: false, icon: 'el-icon-edit-outline', disabled: 'isRow', type: 'primary', permission: ['ums:role:grantMenu', 'ums:role:page'], width: 80 },
+        // { title: '删除', show: true, prop: 'delete', click: this.del, loading: false, icon: 'el-icon-minus', disabled: 'isRow', type: 'primary', permission: ['ums:role:page'], width: 80 },
+        { title: '禁用', show: true, prop: 'diss', click: this.disabledsFn, loading: false, icon: 'el-icon-circle-close', disabled: 'ids', type: 'primary', permission: ['retail:screen:set:batchDisable'], width: 80 }
+        // { title: '审核', show: true, prop: 'edit', click: this.$listeners.review, loading: false, icon: 'el-icon-edit-outline', disabled: 'isRow', type: 'primary', permission: ['ums:role:grantMenu', 'ums:role:page'], width: 80 },
+        // { title: '审核', prop: 'edit', click: this.reviews, loading: false, icon: 'el-icon-edit-outline', disabled: 'ids', type: 'primary', permission: ['ums:role:grantMenu', 'ums:role:page'], width: 80 },
+        // { title: '生成任务单', prop: 'edit', click: this.generateFunction, loading: false, icon: 'el-icon-edit-outline', disabled: 'ids', type: 'primary', permission: ['ums:role:grantMenu', 'ums:role:page'], width: 80 }
+        // { title: '复制', prop: 'copy', click: this.$listeners.openModel, loading: false, icon: 'el-icon-edit-outline', disabled: 'isRow', type: 'primary', permission: ['ums:role:grantMenu', 'ums:role:page'], width: 80 },
+      ],
+      ids: [],
+      currentRow: { id: '' }, // 当前选择数据
+
+      transition: true, // 动画开始
+      transitionMarginTop: 0, // 上部
+      otherOffsetHeight: 0,
+      searchForm: {
+        state: true,
+        pageNum: 1,
+        pageSize: 10
+      },
+      operateItem: { title: '', prop: '', icon: '' },
+      tableData: {
+        records: [],
+        total: 0
+      },
+      details: [], // 详细数据
+      selectList: []
+    }
+  },
+  computed: {
+    idsLength() {
+      return true
+    }
+  },
+  watch: {},
+  created() {
+    console.log('重新加载')
+    this.mixTableOprateLength = this.mix_oprate_length(this.operateTableList)
+    this.searchList.map(item => {
+      this.$set(this.searchForm, item.prop, this.searchForm[item.prop] || (item.defaultValue !== undefined ? item.defaultValue : '')) // searchForm有值，优先用值
+    })
+    this.$nextTick(() => {
+      this.$emit('update:search_form_height', this.$refs.searchForm.$el.offsetHeight)
+    })
+  },
+  methods: {
+    handleSelectionChange(rows) {
+      // if (rows.length === 1) {
+      //   this.currentRow = rows[0]
+      //   this.$listeners.currentSelect(rows[0])
+      // } else {
+      //   this.currentRow = { id: '' }
+      //   this.$listeners.currentSelect({ id: '' })
+      // }
+      this.ids = rows.map(item => item.id)
+    },
+    message(res) {
+      if (res.code === 200) {
+        this.search({ prop: '' }, null, this.searchForm.pageNum)
+        this.$success('操作成功')
+      } else {
+        this.$error(res.data)
+      }
+    },
+    search(operateItem = { prop: '' }, pageSize = null, pageNum = null) { // 操作
+      this.searchForm.pageSize = pageSize || this.searchForm.pageSize
+      this.searchForm.pageNum = pageNum || this.searchForm.pageNum
+      this.searchForm.pageNum = operateItem.prop ? 1 : this.searchForm.pageNum
+      const searchForm = this.deepClone(this.searchForm)
+      Object.keys(searchForm).forEach(item => { searchForm[item] = searchForm[item] || null })
+
+      this.Mixin_loading = true
+      getPage(searchForm).then(res => {
+        this.currentRow = { id: '' }
+        if (res.code === 200) {
+          if (res.data.records.length === 0 && searchForm.pageNum !== 1) {
+            this.search({ prop: '' }, null, searchForm.pageNum - 1)
+          } else {
+            this.tableData = res.data
+            this.Mixin_loading = false
+          }
+        }
+      })
+    },
+    disabledsFn(e, isSure = false) {
+      e.loading = true
+      if (!isSure) {
+        this.$confirm(`确认禁用所选项目吗？`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.disabledsFn(e, true)
+        }).catch(() => {
+          this.$message.info('已取消操作')
+          e.loading = false
+        })
+        return
+      }
+      batchDisable({ ids: this.ids }).then(res => {
+        this.message(res)
+      }).finally(() => {
+        e.loading = false
+      })
+    },
+    switchStateFn(row, isSure = false) {
+      if (!isSure) {
+        this.$confirm(`确认${this.MenuGetPropName('if_enable', !row.state)}吗？`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.switchStateFn(row, true)
+        }).catch(() => {
+          this.$message.info('已取消操作')
+        })
+        return
+      }
+      switchState({ id: row.id }).then(res => {
+        this.message(res)
+      })
+    },
+    dels(operateItem = {}) {
+      operateItem.loading = true
+      this.$confirm(`此操作将永久删除所有选择项目，是否继续？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteOrders({ 'ids': this.ids }).then(res => {
+          this.message(res)
+          operateItem.loading = false
+        }).catch(err => {
+          operateItem.loading = false
+          throw err
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+        operateItem.loading = false
+      })
+    },
+    // reviews() { // 批量审核
+    //   review({ 'ids': this.ids, 'auditStatus': '3' }).then(res => {
+    //     this.message(res)
+    //   })
+    // },
+    transitionBegin(el) {
+      this.otherOffsetHeight = el.offsetHeight
+      this.transitionMarginTop = this.searchFormShow ? 0 : 0 - this.otherOffsetHeight
+    },
+    transitionEnter(el, done) {
+      this.transition = false
+      this.transitionMarginTop = 0
+      done()
+    }
+  }
+}
+</script>
+
+<style scoped>
+.transition{
+  /*position: absolute;*/
+  transition:all .3s ease;
+  margin-top: 0;
+  top: 0;
+}
+</style>
