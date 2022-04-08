@@ -13,25 +13,6 @@
         <h3 class="title">{{ title }}</h3>
       </div>
 
-      <el-form-item prop="accountNum" :class="{'my-el-form-item':focusclassnum===1}">
-        <span class="svg-container">
-          <img class="svg-container-img" :src="require('@/assets/login/帐套.png')">
-        </span>
-        <el-input
-          ref="username"
-          v-model="loginForm.accountNum"
-          placeholder="请输入账套号"
-          name="username"
-          type="text"
-          tabindex="1"
-          maxlength="5"
-          autocomplete="on"
-          @input="checkHasLogin"
-          @focus="focusclassnum=1"
-          @blur="focusclassnum=0"
-        />
-      </el-form-item>
-
       <el-form-item prop="username" :class="{'my-el-form-item':focusclassnum===2}">
         <span class="svg-container">
           <img class="svg-container-img" :src="require('@/assets/login/用户名.png')">
@@ -49,7 +30,6 @@
           @blur="focusclassnum=0"
         />
       </el-form-item>
-
       <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
         <el-form-item prop="password" :class="{'my-el-form-item':focusclassnum===3}">
           <span class="svg-container">
@@ -109,28 +89,20 @@
 </template>
 
 <script>
-// import { validUsername } from '@/utils/validate'
-// import SocialSign from './components/SocialSignin'
 import defaultSettings from '@/settings'
 import { getToken } from '@/utils/auth'
 
 export default {
   name: 'Login',
-  // components: { SocialSign },
   data() {
     return {
       focusclassnum: 0,
       title: defaultSettings.title,
       loginForm: {
-        accountNum: '',
         username: '',
         password: ''
       },
       loginRules: {
-        accountNum: [
-          { required: true, trigger: 'blur', message: '请输入账套' },
-          { min: 5, max: 5, message: '请输入有效账号' }
-        ],
         username: [
           { required: true, trigger: 'blur', message: '请输入账号' },
           { min: 5, max: 20, message: '请输入有效账号' }
@@ -215,10 +187,6 @@ export default {
       this.$store.dispatch('user/login', this.loginForm)
         .then(() => {
           this.$router.push({ path: '/', query: this.otherQuery })
-          this.$store.dispatch('enum/get_enum')
-          setTimeout(() => {
-            this.loading = false
-          }, 1500)
         })
         .catch(() => {
           this.loading = false
