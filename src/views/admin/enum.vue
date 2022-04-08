@@ -93,11 +93,11 @@ export default {
         pageSize: 10
       },
       operateList: [ // 操作栏项目
-        { title: '查询', show: true, prop: 'search', click: this.search, icon: 'el-icon-search', disabled: false, type: 'primary', permission: ['core:basicEnum:query'], width: 80 },
-        { title: '新增', show: true, prop: 'insert', click: this.openModel, loading: false, icon: 'el-icon-plus', disabled: false, type: 'primary', permission: ['core:basicEnum:query'], width: 80 },
-        { title: '修改', show: true, prop: 'edit', click: this.openModel, loading: false, icon: 'el-icon-edit-outline', disabled: 'isRow', type: 'primary', permission: ['core:basicEnum:query'], width: 80 },
-        { title: '追加', show: true, prop: 'withinAdd', click: this.openModel, loading: false, icon: 'el-icon-edit-outline', disabled: 'isRow', type: 'primary', permission: ['core:basicEnum:query'], width: 80 },
-        { title: '删除', show: true, prop: 'delete', click: this.del, loading: false, icon: 'el-icon-delete', disabled: 'isRow', type: 'primary', permission: ['core:basicEnum:query'], width: 80 }
+        { title: '查询', show: true, prop: 'search', click: this.search, icon: 'el-icon-search', disabled: false, type: 'primary', permission: [], width: 80 },
+        { title: '新增', show: true, prop: 'insert', click: this.openModel, loading: false, icon: 'el-icon-plus', disabled: false, type: 'primary', permission: ['basicEnum:add'], width: 80 },
+        { title: '修改', show: true, prop: 'edit', click: this.openModel, loading: false, icon: 'el-icon-edit-outline', disabled: 'isRow', type: 'primary', permission: ['basicEnum:update'], width: 80 },
+        { title: '追加', show: true, prop: 'withinAdd', click: this.openModel, loading: false, icon: 'el-icon-edit-outline', disabled: 'isRow', type: 'primary', permission: ['basicEnum:add'], width: 80 },
+        { title: '删除', show: true, prop: 'delete', click: this.del, loading: false, icon: 'el-icon-delete', disabled: 'isRow', type: 'primary', permission: ['basicEnum:delete'], width: 80 }
       ],
       operateItem: { title: '', prop: '', icon: '' },
       formShow: false,

@@ -10,8 +10,7 @@
       <el-form-item label="电话" prop="phone">
         <el-input v-model="form.phone" @focus="updateInit=false" />
       </el-form-item>
-      <el-form-item label-width="400px">
-        <el-button @click="reset">重置</el-button>
+      <el-form-item label-width="450px">
         <el-button :loading="loading" type="primary" @click="onSubmit">
           <template v-if="formType === 'insert'">
             创建
@@ -65,13 +64,6 @@ export default {
     }
   },
   data() {
-    const accountNumRuler = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请选择'))
-      } else {
-        callback()
-      }
-    }
     return {
       updateInit: false,
       orgs: [],
@@ -110,6 +102,12 @@ export default {
   watch: {
     formType() {
       this.reset()
+    },
+    '$attrs.show': {
+      handler(n) {
+        this.form = this.deepClone(this.rower)
+      },
+      immediate: true
     }
   },
   created() {
@@ -134,10 +132,6 @@ export default {
     },
     reset() {
       this.$refs['form'].resetFields()
-    },
-    accountSelected(account) {
-      this.form.accountId = account.id
-      this.account = account
     },
     saveOrUpdate() {
       saveOrUpdateUser(this.form).then(res => {

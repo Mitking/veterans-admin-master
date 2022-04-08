@@ -120,7 +120,7 @@ export default {
         { title: '查询列表', show: true, click: this.search, icon: 'el-icon-search', disabled: false, type: 'primary', permission: [], width: 80 },
         { title: '添加角色', show: !this.$attrs.child, click: this.save, icon: 'el-icon-plus', disabled: false, type: 'primary', permission: ['role:saveRole'], width: 80 },
         { title: '角色授权', show: !this.$attrs.child, click: this.grantMenuButton, icon: 'el-icon-check', disabled: 'isRow', type: 'info', permission: ['role:grantMenu'], width: 80 },
-        { title: '移动端授权', loading: false, show: !this.$attrs.child, click: this.grantMobileMenuButton, icon: 'el-icon-check', disabled: 'isRow', type: 'success', permission: [], width: 80 },
+        { title: '移动端授权', loading: false, show: !this.$attrs.child, click: this.grantMobileMenuButton, icon: 'el-icon-check', disabled: 'isRow', type: 'success', permission: ['role:grantMenu'], width: 80 },
         { title: '修改角色', show: !this.$attrs.child, click: this.save, icon: 'el-icon-edit-outline', disabled: 'isRow', type: '', permission: ['role:saveRole'], width: 80 },
         { title: '删除角色', show: !this.$attrs.child, click: this.del, icon: 'el-icon-minus', disabled: 'isRow', type: 'danger', permission: ['role:remove'], width: 80 }
       ],

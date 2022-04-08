@@ -3,14 +3,14 @@
     <el-form inline size="mini">
       <el-form-item>
         <!--       v-permission="['ums:menu:saveOrUpdate']" -->
-        <el-button type="primary" icon="el-icon-plus" :disabled="!!!currentRow.id" @click="formType='insertM';formShow=true">追加菜单(M)</el-button>
+        <el-button v-permission="['menu:saveOrUpdate']" type="primary" icon="el-icon-plus" :disabled="!!!currentRow.id" @click="formType='insertM';formShow=true">追加菜单(M)</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button icon="el-icon-edit" :disabled="!currentRow.id || currentRow.id===-1" @click="formType='edit';formShow=true">修改权限
+        <el-button v-permission="['menu:saveOrUpdate']" icon="el-icon-edit" :disabled="!currentRow.id || currentRow.id===-1" @click="formType='edit';formShow=true">修改权限
         </el-button>
       </el-form-item>
       <el-form-item>
-        <el-button :disabled="!!!currentRow.id" type="danger" icon="el-icon-minus" @click="del(currentRow)">删除权限
+        <el-button v-permission="['menu:delete']" :disabled="!!!currentRow.id" type="danger" icon="el-icon-minus" @click="del(currentRow)">删除权限
         </el-button>
       </el-form-item>
     </el-form>

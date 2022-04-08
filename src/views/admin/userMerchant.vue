@@ -4,32 +4,20 @@
       <el-form-item label="用户名">
         <el-input v-model="query.username" clearable @keyup.native.enter="page()" />
       </el-form-item>
-      <el-form-item>
-        <!--   v-permission="['user:page:merchant']"     -->
-        <el-button
-          type="primary"
-          icon="el-icon-search"
-          @click="
-            () => {
-              query.pageNum = 1;
-              page();
-            }
-          "
-        >查询
-        </el-button>
-        <span class="notes">管理当前账套下账号</span>
-      </el-form-item>
     </el-form>
 
     <el-form inline size="mini">
       <el-form-item>
-        <el-button type="primary" icon="el-icon-plus" @click="insert">添加</el-button>
+        <el-button type="primary" icon="el-icon-search" @click="() => {query.pageNum = 1;page();}">查询</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button :disabled="!currentRow.id || currentRow.username === 'admin'" icon="el-icon-edit" @click="update">修改</el-button>
+        <el-button v-permission="['user:saveOrUpdate']" type="primary" icon="el-icon-plus" @click="insert">添加</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button :disabled="!currentRow.id" type="info" icon="el-icon-s-custom" @click="openRoleInfo">分配角色</el-button>
+        <el-button v-permission="['user:saveOrUpdate']" :disabled="!currentRow.id || currentRow.username === 'admin'" icon="el-icon-edit" @click="update">修改</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button v-permission="['user:grantRole']" :disabled="!currentRow.id" type="info" icon="el-icon-s-custom" @click="openRoleInfo">分配角色</el-button>
       </el-form-item>
       <el-form-item>
         <el-button :disabled="!currentRow.id || currentRow.username === 'admin'" type="info" icon="el-icon-s-custom" @click="updatePasswordShow = true">
@@ -38,7 +26,7 @@
       </el-form-item>
       <el-form-item>
         <el-button
-          v-permission="['ums:user:update:resetPwd']"
+          v-permission="[]"
           :disabled="!currentRow.id"
           type="danger"
           icon="el-icon-refresh-left"
@@ -65,12 +53,6 @@
       <el-table-column prop="username" align="center" label="用户名" />
       <el-table-column prop="surname" align="center" label="姓名" />
       <el-table-column prop="phone" align="center" label="手机号" />
-      <el-table-column prop="typeName" align="center" label="账号类型">
-        <template slot-scope="{ row }">{{ getTypeName(row.type) }}</template>
-      </el-table-column>
-      <el-table-column prop="balance" align="center" label="用户余额">
-        <template slot-scope="{ row }">{{ fen2yuan(row.balance) }}</template>
-      </el-table-column>
       <el-table-column prop="updateTime" align="center" label="修改时间" />
       <el-table-column prop="createTime" align="center" label="创建时间" />
     </el-table>

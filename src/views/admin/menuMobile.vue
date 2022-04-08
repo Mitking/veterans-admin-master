@@ -96,12 +96,6 @@ export default {
         { title: '新增菜单', show: true, prop: 'insert', click: this.save, icon: 'el-icon-plus', disabled: false, type: 'primary', permission: [], width: 80 },
         { title: '修改菜单', show: true, prop: 'edit', click: this.save, icon: 'el-icon-edit-outline', disabled: 'isRow', type: 'primary', permission: [], width: 80 },
         { title: '删除菜单', show: true, click: this.del, icon: 'el-icon-minus', disabled: 'isRow', type: 'danger', permission: [], width: 80 }
-
-        // { title: '添加角色', show: !this.$attrs.child, click: this.save, icon: 'el-icon-plus', disabled: false, type: 'primary', permission: ['ums:role:saveRole'], width: 80 },
-        // { title: '角色授权', show: !this.$attrs.child, click: this.grantMenuButton, icon: 'el-icon-check', disabled: 'isRow', type: 'info', permission: ['ums:role:grantMenu'], width: 80 },
-        // { title: '修改角色', show: !this.$attrs.child, click: this.save, icon: 'el-icon-edit-outline', disabled: 'isRow', type: '', permission: ['ums:role:saveRole'], width: 80 },
-        // { title: '删除角色', show: !this.$attrs.child, click: this.del, icon: 'el-icon-minus', disabled: 'isRow', type: 'danger', permission: ['ums:role:remove'], width: 80 }
-        // { title: '批量选择', show: this.$attrs.child, click: this.idsChoose, icon: 'el-icon-finished', disabled: 'ids', permission: [], type: 'success', width: 80 }
       ],
 
       formShow: false,
