@@ -1,4 +1,4 @@
-const module = '/ums'
+const module = ''
 import request from '@/utils/request'
 
 export const getUserTypeName = (code) => {

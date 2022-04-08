@@ -1,4 +1,4 @@
-const module = '/core'
+const module = ''
 import request from '@/utils/request'
 // 初始化enum
 export function enumList(data = {}) {

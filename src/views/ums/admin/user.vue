@@ -202,12 +202,7 @@ export default {
     }
   },
   created() {
-    if ([0, 3].includes(this.$store.getters.accountType)) {
-      this.page()
-    } else {
-      this.$message.info('无访问管理员页面权限！')
-      this.$router.replace({ name: 'Dashboard' })
-    }
+    this.page()
   },
   methods: {
     message(res) {

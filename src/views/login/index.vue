@@ -67,7 +67,7 @@
         <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
           其他登录方式
         </el-button>
-      </div>-->
+      </div>  -->
     </el-form>
 
     <el-dialog title="安全验证" :visible.sync="showDialog" :close-on-click-modal="false" width="500px" :show-close="false">
@@ -174,6 +174,7 @@ export default {
     handleLogin() {
       this.checkHasLogin()
       this.$refs.loginForm.validate(valid => {
+        console.log(valid)
         if (valid) {
           this.login()
         } else {

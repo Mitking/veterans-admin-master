@@ -1,4 +1,4 @@
-const module = '/ums'
+const module = ''
 import request from '@/utils/request'
 /**
  * 平台角色
