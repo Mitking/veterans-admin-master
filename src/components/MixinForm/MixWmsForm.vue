@@ -33,19 +33,6 @@
           }"
         />
         <el-cascader v-if="item.type==='area'" v-model="form[item.prop]" :placeholder="area" clearable style="width: 100%" :options="options" @change="areaChange" />
-        <!-- .name:''       <div v-if="item.type==='cascader' && formshow">{{ (typeof form[item.prop]) }}{{ (typeof form[item.prop])==='string'?item.dataArr[form[item.prop]]:'起始类' }}</div>-->
-        <el-cascader
-          v-if="item.type==='cascader' && formshow"
-          v-model="form[item.prop]"
-          :placeholder="(typeof form[item.prop])==='string' && form[item.prop]?$store.state.enum.enumList[item.dataArr].filter(itemz=>itemz.code===form[item.prop])[0].name:''"
-          clearable
-          :props="{
-            lazy:true,
-            lazyLoad:lazyLoad,
-            checkStrictly: true,
-            emitPath:false
-          }"
-        />
 
         <div v-if="item.type==='if_type'">
           <span>{{
@@ -93,7 +80,6 @@
 </template>
 
 <script>
-import { getCategoryList } from '@/api/core/goodscategory'
 import { regionData, CodeToText } from 'element-china-area-data'
 export default {
   name: 'MixWmsForm',
@@ -239,32 +225,6 @@ export default {
     lazyLoad(node, resolve) {
       this.codeOnfocus(node.level === 0 ? '' : node.data.value).then(res => {
         resolve(res)
-      })
-    },
-    // 商品分类
-    codeOnfocus(e = '') {
-      return new Promise((resolve, reject) => {
-        getCategoryList({ 'parentCode': (e === '' ? '0' : e) }).then(res => {
-          if (res.code === 200) {
-            const treeData = res.data.map(item => ({
-              leaf: !item.haveChild,
-              value: this.$attrs.cascaderbycode ? item.code : item.id,
-              code: item.code,
-              label: item.name,
-              disabled: (!item.enable || this.form.code === item.code) // 不能选自己
-            }))
-            if (e === '') {
-              treeData.unshift({
-                leaf: true,
-                value: this.$attrs.cascaderbycode ? '0' : 1,
-                code: '0',
-                label: '起始类',
-                disabled: false
-              })
-            }
-            resolve(treeData)
-          }
-        })
       })
     },
     // 省市区

@@ -98,7 +98,6 @@
 </template>
 
 <script>
-// import { getCategoryList } from '@/api/core/goodscategory'
 import { regionData, CodeToText } from 'element-china-area-data'
 export default {
   name: 'MixFormUms',

@@ -34,27 +34,12 @@
           inactive-color="#ff4949"
         />
       </div>
-      <!--    :placeholder="(typeof $attrs.form[item.prop])==='string'?item.dataArr[$attrs.form[item.prop]]:''"   产品分类-->
-      <el-cascader
-        v-if="item.type==='goodType'"
-        v-model="$attrs.form[item.prop]"
-        :placeholder="$store.state.enum.enumList[item.dataArr].filter(itemz=>itemz.id===$attrs.form[item.prop]).length>0?$store.state.enum.enumList[item.dataArr].filter(itemz=>itemz.id===$attrs.form[item.prop])[0].name:''"
-        clearable
-        :props="{
-          lazy:true,
-          lazyLoad:lazyLoad,
-          checkStrictly: true,
-          emitPath:false
-        }"
-      />
-      <!--      <div v-if="$attrs.readonly">{{ $attrs.form[item.prop]?$attrs.form[item.prop].toString():'-' }}</div>-->
     </el-form-item>
   </el-form>
 <!--  </el-collapse-item>-->
 </template>
 
 <script>
-import { getCategoryList } from '@/api/core/goodscategory'
 
 export default {
   name: 'MixAddModule',
@@ -82,37 +67,6 @@ export default {
   },
   created() {},
   methods: {
-    // 商品分类
-    codeOnfocus(e = '', node) {
-      return new Promise((resolve, reject) => {
-        getCategoryList({ 'parentCode': (e === '' ? '0' : e) }).then(res => {
-          if (res.code === 200) {
-            const treeData = res.data.map(item => ({
-              leaf: !item.haveChild,
-              value: item.id,
-              code: item.code,
-              label: item.name,
-              disabled: (!item.enable)
-            }))
-            // if (e === '') {
-            //   treeData.unshift({
-            //     leaf: true,
-            //     value: this.$attrs.cascaderbycode ? '0' : 1,
-            //     code: '0',
-            //     label: '起始类',
-            //     disabled: false
-            //   })
-            // }
-            resolve(treeData)
-          }
-        })
-      })
-    },
-    lazyLoad(node, resolve) {
-      this.codeOnfocus(node.level === 0 ? '' : node.data.code, node).then(res => {
-        resolve(res)
-      })
-    }
   }
 }
 </script>

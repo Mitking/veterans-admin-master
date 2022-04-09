@@ -1,5 +1,5 @@
 // 数据字典
-import { enumList } from '@/api/core/enum.js'
+import { enumList } from '@/api/enum.js'
 import { getToken } from '@/utils/auth' // get token from cookie
 const state = { // 字段库
   enumList: {

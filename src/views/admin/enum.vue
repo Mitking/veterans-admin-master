@@ -69,7 +69,7 @@
 
 <script>
 import MixinGlobal from '@/components/MixinGlobal'
-import { getEnumPage, deleteEnum, insertEnum, updateEnum } from '@/api/core/enum'
+import { getEnumPage, deleteEnum, insertEnum, updateEnum } from '@/api/enum'
 export default {
   name: 'Enum',
   components: { },

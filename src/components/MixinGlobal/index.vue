@@ -6,8 +6,6 @@ import MixOperate from '@/components/MixinForm/MixinOperate'
 import MixSearch from '@/components/MixinForm/MixinSearch'
 import MixPage from '@/components/MixinForm/MixPage'
 import MixAddModule from '@/components/MixinForm/MixAddModule'
-import MixTabs from '@/components/MixinForm/MixTabs'
-import MixTable from '@/components/MixinForm/MixTable'
 import MixTree from '@/components/MixinForm/MixTree'
 import MixWmsForm from '@/components/MixinForm/MixWmsForm'
 import clipboard from '@/directive/clipboard/index.js'
@@ -19,8 +17,6 @@ export default {
     MixSearch,
     MixPage,
     MixAddModule,
-    MixTabs,
-    MixTable,
     MixTree,
     MixWmsForm,
     MixFormUms

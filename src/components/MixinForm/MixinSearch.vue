@@ -28,22 +28,6 @@
           @clear="$listeners.clickClear(item.reallyProp)"
         />
         <el-cascader
-          v-if="item.type==='goodsCategory'"
-          v-model="$attrs.form[item.prop]"
-          :disabled="item.disabled"
-          placeholder="可关键字筛选"
-          filterable
-          clearable
-          :options="goodsOptions"
-          :props="{
-            value:item.valueProp || 'code',
-            label:'name',
-            emitPath:false,
-            checkStrictly: true
-          }"
-          @focus="getCategoryFn"
-        />
-        <el-cascader
           v-if="item.type==='feeName'"
           v-model="$attrs.form[item.prop]"
           clearable
@@ -123,52 +107,16 @@
 </template>
 
 <script>
-import { getPriceAlgTeamEntity } from '@/api/core/algteam'
-import { getInvDiffReasonGroup } from '@/api/wms/InvDiffReason'
-import { getInvDiffReasonGroup as getAdjustReason } from '@/api/wms/AdjustReason'
-import { getCustomerTypeGroup } from '@/api/core/Customer'
-import { getFinTaxRateList } from '@/api/oms/fin/finTaxRate'
-import { getAccountList } from '@/api/ums/account'
-import { getCategoryList, getCategoryTree } from '@/api/core/goodscategory'
 import { queryOrgByAccountId } from '@/api/ums/org'
 import store from '@/store'
-import { getStoreList } from '@/api/core/store'
-import { getStockGroupList, getStockList } from '@/api/core/stock'
-import { getBrandList } from '@/api/core/brand'
-import { getSupplierGroupList } from '@/api/core/supplier'
-import { getGroupList } from '@/api/core/store'
-import { getUsersByRoleName } from '@/api/ums/role'
 import { mapGetters } from 'vuex'
-// import { getFeeList } from '@/api/oms/fin/feemanage'
-import { getFeeSelectList } from '@/api/oms/fin/feemanage'
 export default {
   name: 'MixinSearch',
   components: { },
   data() {
     return {
-      goodsOptions: [],
       selectForm: false,
-      mixinPKey: {
-        alg_team: [getPriceAlgTeamEntity, {}],
-        FinTaxRateList: [getFinTaxRateList, {}],
-        CustomerType: [getCustomerTypeGroup, {}],
-        accounts: [getAccountList, {}],
-        organizes: [queryOrgByAccountId, { accountId: this.$store.getters.accountType !== 0 ? this.accountId : null }],
-        stores: [getStoreList, {}],
-        stockId: [getStockList, {}],
-        categoryList: [getCategoryList, {}],
-        brandList: [getBrandList, {}],
-        feeSelectListLast: [getFeeSelectList, { ifLastQuery: true }],
-        feeSelectList: [getFeeSelectList, { ifLastQuery: false }],
-        supplier_group: [getSupplierGroupList, {}],
-        store_group: [getGroupList, {}],
-        stock_group: [getStockGroupList, {}],
-        diff_reason: [getInvDiffReasonGroup, {}],
-        adjust_reason: [getAdjustReason, {}],
-        personListCG: [getUsersByRoleName, { roleName: '采购员' }, 'id_to_string'],
-        personListSH: [getUsersByRoleName, { roleName: '仓储收货' }, 'id_to_string'],
-        personListSJ: [getUsersByRoleName, { roleName: '司机' }, 'id_to_string']
-      },
+      mixinPKey: {},
       goodstypeshowvalue: '',
       searchShow: false,
       treeData: [],
@@ -203,7 +151,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['accountId', 'enumList']),
+    ...mapGetters(['enumList']),
     rules() { // 相关校验
       const temp = {}
       this.$attrs.formlist.map(item => {
@@ -283,67 +231,12 @@ export default {
             return Promise.resolve(false)
           }
         }
-        if (arr[i].type === 'goodsCategory') { // 直接代入数据
-          this.getCategoryFn()
-        }
       }
       return Promise.resolve(true)
-    },
-    // 获取商品分类
-    getCategoryFn() {
-      getCategoryTree({}).then(res => {
-        this.goodsOptions = res.data
-      })
     },
     searchSync(e) {
       this.$set(this.$attrs.form, 'parentCode', e.code)
       this.goodstypeshowvalue = e.name
-    },
-    // 商品分类
-    codeOnfocus(e = '', node) {
-      if (node.hasChildren === false) {
-        return Promise.resolve([])
-      }
-      return new Promise((resolve, reject) => {
-        getCategoryList({ 'parentCode': e }).then(res => {
-          if (res.code === 200) {
-            if (res.data && res.data.length > 0) {
-              const treeData = res.data.map(item => ({
-                leaf: !item.haveChild,
-                value: this.$attrs.cascaderbycode ? item.code : item.id,
-                code: item.code,
-                label: item.name,
-                disabled: (!item.enable)
-              }))
-              // if (e === '') {
-              //   treeData.unshift({
-              //     leaf: true,
-              //     value: this.$attrs.cascaderbycode ? '0' : 1,
-              //     code: '0',
-              //     label: '起始类',
-              //     disabled: false
-              //   })
-              // }
-              resolve(treeData)
-            } else {
-              resolve([
-                {
-                  leaf: true,
-                  value: this.$attrs.cascaderbycode ? '0' : 1,
-                  code: '0',
-                  label: '起始类',
-                  disabled: false
-                }
-              ])
-            }
-          }
-        })
-      })
-    },
-    lazyLoad(node, resolve) {
-      this.codeOnfocus(node.level === 0 ? '0' : node.data.code, node).then(res => {
-        resolve(res)
-      })
     }
   }
 }
