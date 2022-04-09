@@ -107,7 +107,6 @@
 </template>
 
 <script>
-import { queryOrgByAccountId } from '@/api/ums/org'
 import store from '@/store'
 import { mapGetters } from 'vuex'
 export default {
@@ -219,9 +218,6 @@ export default {
     async init(arr) {
       for (let i = 0; i < arr.length; i++) {
         if (arr[i].selectData && Object.keys(this.mixinPKey).includes(arr[i].selectData) && this.enumList[arr[i].selectData].length === 0) {
-          if (arr[i].selectData === 'organizes') { // 刷新页面没有获取到accountId
-            this.mixinPKey.organizes = [queryOrgByAccountId, { accountId: this.$store.getters.accountType !== 0 ? this.accountId : null }]
-          }
           const { code, data } = await this.mixinPKey[arr[i].selectData][0](this.mixinPKey[arr[i].selectData][1])
           if (code === 200) {
             await store.dispatch('enum/add_enum', { [arr[i].selectData]: data || [] })

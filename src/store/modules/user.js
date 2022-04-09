@@ -2,7 +2,7 @@
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
-// import { queryOrgByAccountId } from '@/api/ums/org'
+// import { queryOrgByAccountId } from '@/api/org'
 // import { mutations as enumMutations } from './enum'
 // import Layout from '@/layout'
 

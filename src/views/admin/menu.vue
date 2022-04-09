@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import { queryAllMenus, saveOrUpdate, deleteMenu } from '@/api/ums/menu'
+import { queryAllMenus, saveOrUpdate, deleteMenu } from '@/api/menu'
 import BaseProps from '@/views/admin/components/menu/BaseProps'
 import Buttons from '@/views/admin/components/menu/Buttons'
 import MixinGlobal from '@/components/MixinGlobal'

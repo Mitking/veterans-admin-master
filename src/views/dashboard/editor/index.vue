@@ -1,13 +1,14 @@
 <template>
   <div class="dashboard-editor-container" style=" background: #F5F5FA;">
-    hello
+    <LocalAdd />
   </div>
 </template>
 
 <script>
+import LocalAdd from '@/components/local/LocalAdd'
 export default {
   name: 'DashboardEditor',
-  components: { },
+  components: { LocalAdd },
   data() {
     return {
 

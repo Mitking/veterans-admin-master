@@ -79,7 +79,7 @@
 <script>
 import MixinGlobal from '@/components/MixinGlobal'
 // import menuSelect from '@/views/admin/components/menuSelect'
-import { page, updateMobileMenu, add, delItem } from '@/api/ums/menumobile'
+import { page, updateMobileMenu, add, delItem } from '@/api/menumobile'
 export default {
   name: 'MenuMobile',
   components: { },

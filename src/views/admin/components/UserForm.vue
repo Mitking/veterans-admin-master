@@ -47,7 +47,7 @@
   </div>
 </template>
 <script>
-import { saveOrUpdateUser } from '@/api/ums/user'
+import { saveOrUpdateUser } from '@/api/user'
 import { mapGetters } from 'vuex'
 
 export default {

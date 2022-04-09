@@ -98,8 +98,8 @@
 
 <script>
 import MixinGlobal from '@/components/MixinGlobal'
-import { roleMerchant, saveRole, grantMenu, changeMobileMenu, removeRole } from '@/api/ums/role'
-import { roleMobileInfo } from '@/api/ums/menumobile'
+import { roleMerchant, saveRole, grantMenu, changeMobileMenu, removeRole } from '@/api/role'
+import { roleMobileInfo } from '@/api/menumobile'
 import MenuGrant from './components/menu/MenuGrant.vue'
 
 export default {

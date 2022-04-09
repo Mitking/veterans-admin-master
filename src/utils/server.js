@@ -1,7 +1,7 @@
 export const getServiceName = (apiUrl) => {
   if (apiUrl.indexOf('/api/task') > -1) {
     return 'Task服务'
-  } else if (apiUrl.indexOf('/api/ums') > -1) {
+  } else if (apiUrl.indexOf('/api') > -1) {
     return 'UMS服务'
   } else if (apiUrl.indexOf('/api/wms') > -1) {
     return 'WMS服务'

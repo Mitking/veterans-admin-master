@@ -37,7 +37,7 @@
 
 <script type="text/javascript">
 import ButtonsView from '@/views/admin/components/menu/ButtonsView.vue'
-import { grantMenu, roleInfo } from '@/api/ums/role'
+import { grantMenu, roleInfo } from '@/api/role'
 
 export default {
   name: 'MenuGrant',

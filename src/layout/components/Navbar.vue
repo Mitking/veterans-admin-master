@@ -79,7 +79,7 @@ import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
-import { updatePwd } from '@/api/ums/user'
+import { updatePwd } from '@/api/user'
 export default {
   components: {
     Breadcrumb,

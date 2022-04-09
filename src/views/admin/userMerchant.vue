@@ -162,10 +162,10 @@ import {
   updatePwd,
   resetPwd,
   deleteUser
-} from '@/api/ums/user'
+} from '@/api/user'
 import UserForm from '@/views/admin/components/UserForm'
 // import RoleList from './role'
-import { getUsersByRoleName } from '@/api/ums/role'
+import { getUsersByRoleName } from '@/api/role'
 import store from '@/store'
 export default {
   name: 'UserMerchant',

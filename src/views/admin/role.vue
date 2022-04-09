@@ -73,7 +73,7 @@
 <script>
 import MixinGlobal from '@/components/MixinGlobal'
 import menuSelect from '@/views/admin/components/menuSelect'
-import { page, saveRole, grantMenu, roleInfo, removeRole } from '@/api/ums/role'
+import { page, saveRole, grantMenu, roleInfo, removeRole } from '@/api/role'
 export default {
   name: 'Role',
   components: { menuSelect },

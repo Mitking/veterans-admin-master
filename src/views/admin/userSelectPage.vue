@@ -92,7 +92,7 @@
 
 <script>
 import MyPagination from '@/components/Pagination/MyPagination'
-import { getUserTypeName, userPage, grantRole, deleteUser } from '@/api/ums/user'
+import { getUserTypeName, userPage, grantRole, deleteUser } from '@/api/user'
 import UserForm from '@/views/admin/components/UserForm'
 import RoleList from './role'
 
