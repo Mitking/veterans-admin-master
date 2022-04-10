@@ -30,7 +30,7 @@
       <el-table-column align="center" label="小区/组" prop="groupName" />
       <el-table-column align="center" label="名称" prop="orgName" />
       <el-table-column align="center" label="负责人" prop="manager" />
-      <el-table-column align="center" label="负责人联系电话" prop="managerMobile" />
+      <el-table-column align="center" label="联系电话" prop="managerMobile" />
       <!-- <el-table-column align="center" label="状态" prop="state" /> -->
       <el-table-column align="center" label="创建类型">
         <template slot-scope="{row}">

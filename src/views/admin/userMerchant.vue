@@ -2,13 +2,13 @@
   <div style="margin: 24px">
     <el-form inline>
       <el-form-item label="用户名">
-        <el-input v-model="query.username" clearable @keyup.native.enter="page()" />
+        <el-input v-model="query.username" clearable @keyup.native.enter="page(1)" />
       </el-form-item>
     </el-form>
 
     <el-form inline size="mini">
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" @click="() => {query.pageNum = 1;page();}">查询</el-button>
+        <el-button type="primary" icon="el-icon-search" @click="page(1)">查询</el-button>
       </el-form-item>
       <el-form-item>
         <el-button v-permission="['user:saveOrUpdate']" type="primary" icon="el-icon-plus" @click="insert">添加</el-button>
@@ -38,9 +38,8 @@
         <el-button v-permission="['ums:user:delete']" :disabled="!currentRow.id || currentRow.username === 'admin'" type="danger" icon="el-icon-refresh-left" @click="del">删除账号</el-button>
       </el-form-item>
     </el-form>
-
+    <!-- v-loading="loading" -->
     <el-table
-      v-loading="loading"
       border
       highlight-current-row
       :data="tableData.records"
@@ -245,7 +244,7 @@ export default {
     }
   },
   created() {
-    this.page()
+    this.page(1)
   },
   methods: {
     message(res) {
@@ -364,8 +363,9 @@ export default {
         })
       })
     },
-    page() {
+    page(n = null) {
       this.loading = true
+      this.query.pageNum = n || this.query.pageNum
       userPage(this.query).then(res => {
         this.loading = false
         this.tableData = res.data
