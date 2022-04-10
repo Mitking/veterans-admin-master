@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-editor-container" style=" background: #F5F5FA;">
-    <LocalAdd />
+    <LocalAdd @localChange="log" />
   </div>
 </template>
 
@@ -42,7 +42,9 @@ export default {
 
   },
   methods: {
-
+    log(e) {
+      console.log(e)
+    }
   }
 }
 </script>

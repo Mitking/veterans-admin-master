@@ -38,6 +38,13 @@ export const getVillageByPcode = (data = {}) => {
  * 添加村
  * @returns
  */
+export const getGroupByPcode = (data = {}) => {
+ return request.post('/sysGroup/getListSysGroup', data)
+}
+/**
+ * 添加村
+ * @returns
+ */
 export const addVillage = (data = {}) => {
   return request.post('/sysVillage/addSysVillage', data)
 }

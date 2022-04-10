@@ -1,29 +1,21 @@
 <template>
-  <div>
-    <el-form ref="form" label-width="100px">
-      <el-form-item label="省">
-        <el-cascader
-          v-model="localValue"
-          :options="options"
-          :props="{label:'province',
-                   value:'id',
-                   lazy: true,
-                   lazyLoad:lazyLoad}"
-        />
-      </el-form-item>
-      <div>
-        <el-form-item>
-          <el-button type="primary" @click="addVillage">
-            追加村
-          </el-button>
-        </el-form-item>
-      </div>
-    </el-form>
-  </div>
+  <el-cascader
+    v-model="localValue"
+    :clearable="$attrs.clearable"
+    style="width:100%"
+    :placeholder="$attrs.placeholder"
+    :options="options"
+    :props="{label:'province',
+             value:'id',
+             lazy: true,
+             checkStrictly:$attrs.check_strictly,
+             lazyLoad:lazyLoad}"
+    @change="change"
+  />
 </template>
 
 <script>
-import { getAllProvince, getCityByPcode, getCountyByPcode, getTownByPcode, getVillageByPcode, addVillage } from '@/api/localcode/local'
+import { getAllProvince, getCityByPcode, getCountyByPcode, getTownByPcode, getVillageByPcode, getGroupByPcode, addVillage } from '@/api/localcode/local'
 export default {
   name: 'LocalAdd',
   components: { },
@@ -41,10 +33,14 @@ export default {
   },
   mounted() {
     getAllProvince().then(res => {
+      // res.data.map(item => { item.disabled = true })
       this.options = res.data
     })
   },
   methods: {
+    change(e) {
+      if (this.$listeners.localChange) { this.$listeners.localChange(e) }
+    },
     addVillage() {
       addVillage({
         'pcode': this.localValue[3],
@@ -83,7 +79,15 @@ export default {
         }
         if (node.level === 4) {
           getVillageByPcode({ pcode }).then(res => {
-            res.data.map(item => { item.province = item.village; item.leaf = true })
+            res.data.map(item => { item.province = item.village })
+            resolve(res.data)
+          }).catch(() => {
+            resolve([])
+          })
+        }
+        if (node.level === 5) {
+          getGroupByPcode({ }).then(res => {
+            res.data.map(item => { item.province = item.groupName; item.leaf = true })
             resolve(res.data)
           }).catch(() => {
             resolve([])
